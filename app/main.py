@@ -2,8 +2,8 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
 import requests, json, os
-from dotenv import load_dotenv
-load_dotenv()
+import yaml
+from yaml.loader import SafeLoader
 
 background_image = """
 <style>
@@ -20,10 +20,10 @@ background_image = """
 
 payload = ""
 headers = {
-  'apikey': os.getenv('KEY_SUPA')
+  'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxncXBjY2J0b2FmanlhZ2NhdmJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI3NTkxNzYsImV4cCI6MjAyODMzNTE3Nn0.8Eztx6ygiqK6jP48BC7TsXwevH0Ji-GbpRdMkOI-_m0'
 }
 
-response = requests.request("GET", os.getenv('URL_SUPA'), headers=headers, data=payload).json()
+response = requests.request("GET", 'https://lgqpccbtoafjyagcavbd.supabase.co/rest/v1/users', headers=headers, data=payload).json()
 
 config = {
     'credentials': {
