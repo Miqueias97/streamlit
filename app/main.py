@@ -224,7 +224,7 @@ if st.session_state["authentication_status"]:
     # filtros
     
     status = df['Classe'].unique().tolist()
-    filtra_classe = st.sidebar.multiselect('Status do Envio',
+    filtra_classe = st.sidebar.multiselect('Classe do pedido',
                                   status,
                                   default=status)
 
@@ -234,7 +234,7 @@ if st.session_state["authentication_status"]:
                                   default=status)
     
     transport = df['Transp. 🚚'].unique().tolist()
-    filter_transp = st.sidebar.multiselect('Status do Envio',
+    filter_transp = st.sidebar.multiselect('Transportador',
                                   transport,
                                   default=transport)
     
