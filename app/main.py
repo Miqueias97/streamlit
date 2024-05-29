@@ -57,6 +57,7 @@ authenticator.login()
 if st.session_state["authentication_status"]:
     authenticator.logout()
     st.write(f'Bem Vindo *{st.session_state["name"]}*')
+    import time
     def tickets():
         data = []
         cont = 0
@@ -130,51 +131,52 @@ if st.session_state["authentication_status"]:
             'Authorization': f'Basic MTgwNTc2MjQ6TkdmZDdvM0dwUkp0enNhd0VHc1EwVzRBQXNZcXNDMTBIalhtVmxpdw=='
         }
         return requests.request("POST", url, headers=headers, data=payload).json()    
-
-    tkJamef = tokenJamef()
-    dados = []
-    for i in tickets():
-            data = ''
-            status = ''
-            if i[4] == 'Jadlog':
-                info = jadlog(i[2])
-                try:
-                    status = info['consulta'][0]['erro']['descricao']
-                except:
-                    status = info['consulta'][0]['tracking']['eventos']
-                    data = status[len(status) - 1 ]['data']
-                    status = status[len(status) - 1 ]['status']
-
-            if i[4] == 'Jamef':
-                info = apiJamef(i[2], tkJamef)
-                try:
-                    status = str(info['message']['message']).split(',')[0]
-                except:
-                    status = info['conhecimentos'][0]['historico'][0]['statusRastreamento']
-                    data = info['conhecimentos'][0]['historico'][0]['dataAtualizacao']
-
-            try:
-                if i[4] == 'Correios':
-                    cod = str(i[12]).replace(" ", '')
-                    info = apiCorreios(cod)
+    try:
+        tkJamef = tokenJamef()
+        dados = []
+        for i in tickets():
+                data = ''
+                status = ''
+                if i[4] == 'Jadlog':
+                    info = jadlog(i[2])
                     try:
-                        status = info[0]['eventos'][0]['descricaoEvento']
-                        data = info[0]['eventos'][0]['dataEvento']
+                        status = info['consulta'][0]['erro']['descricao']
                     except:
-                        status = info[0]['mensagem']
-            except:
-                status = 'Erro'
-            a = [i[4], i[2], f'<a href="https://app.hubspot.com/contacts/5282301/record/0-5/{i[5]}">{i[5]}<a/>', i[9], i[7], i[3], i[15], i[13], i[14]]
-            a.extend([status, data])
-            dados.append(a)
-            
+                        status = info['consulta'][0]['tracking']['eventos']
+                        data = status[len(status) - 1 ]['data']
+                        status = status[len(status) - 1 ]['status']
 
-    cols = ['🚚', 'NF', 'Ticket Id', 'Ticket Name', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
-    df = pd.DataFrame.from_records(dados, columns=cols)
-    df = df.sort_values('Prazo de entrega')
-    df = df.to_html(escape=False, index=None)
-    st.write(df, unsafe_allow_html=True)
-    
+                if i[4] == 'Jamef':
+                    info = apiJamef(i[2], tkJamef)
+                    try:
+                        status = str(info['message']['message']).split(',')[0]
+                    except:
+                        status = info['conhecimentos'][0]['historico'][0]['statusRastreamento']
+                        data = info['conhecimentos'][0]['historico'][0]['dataAtualizacao']
+
+                try:
+                    if i[4] == 'Correios':
+                        cod = str(i[12]).replace(" ", '')
+                        info = apiCorreios(cod)
+                        try:
+                            status = info[0]['eventos'][0]['descricaoEvento']
+                            data = info[0]['eventos'][0]['dataEvento']
+                        except:
+                            status = info[0]['mensagem']
+                except:
+                    status = 'Erro'
+                a = [i[4], i[2], f'<a href="https://app.hubspot.com/contacts/5282301/record/0-5/{i[5]}">{i[5]}<a/>', i[9], i[7], i[3], i[15], i[13], i[14]]
+                a.extend([status, data])
+                dados.append(a)
+                
+
+        cols = ['🚚', 'NF', 'Ticket Id', 'Ticket Name', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
+        df = pd.DataFrame.from_records(dados, columns=cols)
+        df = df.sort_values('Prazo de entrega')
+        df = df.to_html(escape=False, index=None)
+        st.write(df, unsafe_allow_html=True)
+    except:
+        time.sleep(10)    
 
 elif st.session_state["authentication_status"] is False:
     st.error('Usuário/Senha is inválido')
