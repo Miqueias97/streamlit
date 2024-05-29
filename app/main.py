@@ -185,7 +185,7 @@ if st.session_state["authentication_status"]:
         return dados           
 
     dados = cria_lista()
-    cols = ['Transp. 🚚', 'NF', 'Ticket Id', 'Ticket Name', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
+    cols = ['Transp. 🚚', 'NF', 'Ticket Id', 'Razão Social', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
     df = pd.DataFrame.from_records(dados, columns=cols)
     qtd_tk = len(dados)
     st.markdown("# Acompanhamento Envios 🚚")
@@ -220,43 +220,41 @@ if st.session_state["authentication_status"]:
         </table>
       ''')
 
-    if True:# st.checkbox('Listar Tickets'):
-        df = df.sort_values('Prazo de entrega')
-        df = df.values.tolist()
-        a = '''
-                <table style="text-align: center;
-                        border: .01rem;
-                        border-radius: .5rem;
-                        padding: 0%;
-                        background-color: #07074e; >
-                    <thead>
-                    <tr>
-                    <th style="color: white;"></th>
-            '''
-        for i in cols:
-            a+=  f'<th style="color: white;">{i}</th>'
+    df = df.sort_values('Prazo de entrega')
+    df = df.values.tolist()
+    a = '''
+            <table style="text-align: center;
+                    border: .01rem;
+                    border-radius: .5rem;
+                    padding: 0%;
+                    background-color: #07074e; >
+                <thead>
+                <tr>
+                <th style="color: white;"></th>
+        '''
+    for i in cols:
+        a+=  f'<th style="color: white;">{i}</th>'
 
-        a+=   '''
-            </tr>
-            </thead>
-            <tbody>'''
+    a+=   '''
+        </tr>
+        </thead>
+        <tbody>'''
+    
+    for i in df:
+        a += '<tr>'
+        for j in i:
+            a += f'''<td style="background-color: white; 
+                border : solid .01rem;
+            ">{j}</td>
+                '''
         
-        for i in df:
-            a += '<tr>'
-            for j in i:
-                a += f'''<td style="background-color: white; 
-                    border : solid .01rem;
-                ">{j}</td>
-                    '''
-            
-            a+= '</tr>'
+        a+= '</tr>'
 
-        a += '''
-            </tbody>
-            </table>   
-      '''
-        #df = df.to_html(escape=False, index=None)
-        st.write(a, unsafe_allow_html=True)
+    a += '''
+        </tbody>
+        </table>   
+    '''
+    st.write(a, unsafe_allow_html=True)
 
     
 
