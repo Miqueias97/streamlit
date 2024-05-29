@@ -64,6 +64,8 @@ if st.session_state["authentication_status"]:
             for i in requests.get('https://script.google.com/macros/s/AKfycbyKPUmiuTnTbGid3to46v_2bCEitpMnzXdPCxaFGq2QEbZmvmoGP8sVzwTJyV4zlSo1mQ/exec').json()['status']:
                 if cont > 0 and i[0] != '':
                     data.append(i)
+                if cont == 15:
+                    break
                 cont +=1
             return data
 
@@ -219,7 +221,29 @@ if st.session_state["authentication_status"]:
       ''')
 
     df = df.sort_values('Prazo de entrega')
-    df = df.values.tolist()
+    # filtros
+    
+    status = df['Classe'].unique().tolist()
+    filtra_classe = st.sidebar.multiselect('Status do Envio',
+                                  status,
+                                  default=status)
+
+    status = df['Status Prazo'].unique().tolist()
+    status_filter = st.sidebar.multiselect('Status do Envio',
+                                  status,
+                                  default=status)
+    
+    transport = df['Transp. 🚚'].unique().tolist()
+    filter_transp = st.sidebar.multiselect('Status do Envio',
+                                  transport,
+                                  default=transport)
+    
+    filtros = (df['Status Prazo'].isin(status_filter)) & (df['Classe'].isin(filtra_classe)) & (df['Transp. 🚚'].isin(filter_transp))
+    
+    df = df[filtros]
+    
+    
+    data = df.values.tolist()
     a = '''
             <table style="text-align: center;
                     border: .01rem;
@@ -238,7 +262,7 @@ if st.session_state["authentication_status"]:
         </thead>
         <tbody>'''
     
-    for i in df:
+    for i in data:
         a += '<tr>'
         for j in i:
             a += f'''<td style="background-color: white; 
