@@ -64,8 +64,6 @@ if st.session_state["authentication_status"]:
             for i in requests.get('https://script.google.com/macros/s/AKfycbyKPUmiuTnTbGid3to46v_2bCEitpMnzXdPCxaFGq2QEbZmvmoGP8sVzwTJyV4zlSo1mQ/exec').json()['status']:
                 if cont > 0 and i[0] != '':
                     data.append(i)
-                if cont == 15:
-                    break
                 cont +=1
             return data
 
