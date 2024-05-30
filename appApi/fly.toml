@@ -1,0 +1,18 @@
+app = "old-smoke-6017"
+# fly.toml file generated for purple-grass-9545 on 2024-05-30T11:35:23-03:00
+
+app = "purple-grass-9545"
+primary_region = "ams"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+
+[env]
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
