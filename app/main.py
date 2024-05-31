@@ -125,6 +125,7 @@ if st.session_state["authentication_status"]:
     if len(str(filter_agendado).strip()) > 0:
         if filter_agendado == 'Sim':
             filtros = (df['Ticket Agendamento'] != "")
+            df = df.sort_values('Data Agendamento')
         else:
             filtros = (df['Ticket Agendamento'] == "")
         df = df[filtros]
