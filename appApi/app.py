@@ -1,71 +1,9 @@
 from flask import Flask
-import requests, json, datetime, time, os, asyncio
-from jamef import tokenJamef, apiJamef
+import requests, json, datetime, time, os
+from jamef import tokenJamef
 from dotenv import load_dotenv
 load_dotenv()
 
-'''
-def cria_lista():
-    def tickets():
-        data = []
-        cont = 0
-        for i in requests.get('{}').json()['status']:
-            if cont > 0 and i[0] != '':
-                data.append(i)
-            cont +=1
-        return data
-
-    
-
-    
-
-     
-    try:
-        dados = []
-        for i in tickets():
-                data = ''
-                status = ''
-                if i[4] == 'Jadlog':
-                    info = jadlog(i[2])
-                    
-
-                if i[4] == 'Jamef':
-                    info = apiJamef(i[2], tkJamef)
-                    try:
-                        status = str(info['message']['message']).split(',')[0]
-                    except:
-                        status = info['conhecimentos'][0]['historico'][0]['statusRastreamento']
-                        data = info['conhecimentos'][0]['historico'][0]['dataAtualizacao']
-
-                try:
-                    if i[4] == 'Correios':
-                        cod = str(i[12]).replace(" ", '')
-                        info = apiCorreios(cod)
-                        try:
-                            status = info[0]['eventos'][0]['descricaoEvento']
-                            data = info[0]['eventos'][0]['dataEvento']
-                        except:
-                            status = info[0]['mensagem']
-                except:
-                    status = 'Erro'
-                prazo = str(i[3]).split('T')
-                prazo = datetime.datetime.strptime(prazo[0], '%Y-%m-%d')
-                prazo = prazo.strftime('%d/%m/%Y')
-                instalacao, dt_inst = '', ''
-                if len(str(i[13]).strip()) != 0 and str(i[13]) != 'None':
-                    instalacao = f'<a href="https://app.hubspot.com/contacts/5282301/record/0-5/{i[13]}">{i[13]}<a/>'
-                    dt_inst = str(i[3]).split('T')
-                    dt_inst = datetime.datetime.strptime(dt_inst[0], '%Y-%m-%d')
-                    dt_inst = datetime.datetime.strptime(prazo[0], '%Y-%m-%d')
-                    dt_inst = dt_inst.strftime('%d/%m/%Y')
-                a = [i[4], i[2], f'<a href="https://app.hubspot.com/contacts/5282301/record/0-5/{i[5]}">{i[5]}<a/>', i[9], i[7], prazo, i[15], instalacao, dt_inst]
-                a.extend([status, data])
-                dados.append(a)
-    except:
-        time.sleep(10)  
-            
-    return dados
-'''
 app = Flask(__name__)
 
 
@@ -173,4 +111,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
