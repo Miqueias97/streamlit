@@ -1,28 +1,14 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
-import requests, json, os
+import requests, json
 st.set_page_config(layout="wide")
 
-background_image = """
-<style>
-[data-testid="stAppViewContainer"] > .main {
-    background-color: #07074E;
-    margin : 0px;
-    padding: 0%;
-    width: 100%
-}
-</style>
-"""
-#st.markdown(background_image, unsafe_allow_html=True)
-
-
-payload = ""
 headers = {
   'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxncXBjY2J0b2FmanlhZ2NhdmJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI3NTkxNzYsImV4cCI6MjAyODMzNTE3Nn0.8Eztx6ygiqK6jP48BC7TsXwevH0Ji-GbpRdMkOI-_m0'
 }
 
-response = requests.request("GET", 'https://lgqpccbtoafjyagcavbd.supabase.co/rest/v1/users', headers=headers, data=payload).json()
+response = requests.request("GET", 'https://lgqpccbtoafjyagcavbd.supabase.co/rest/v1/users', headers=headers).json()
 
 config = {
     'credentials': {
@@ -56,13 +42,23 @@ authenticator.login()
 if st.session_state["authentication_status"]:
     authenticator.logout()
     st.write(f'Bem Vindo *{st.session_state["name"]}*')
-    
-    dados = '' #cria_lista()
-    cols = ['Transp. 🚚', 'NF', 'Ticket Id', 'Razão Social', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
-    df = pd.DataFrame.from_records(dados, columns=cols)
-    qtd_tk = len(dados)
     st.markdown("# Acompanhamento Envios 🚚")
-    atrasados = df[df['Status Prazo'] == 'Atrasado']
+    
+
+    dados = requests.get('https://appapi.fly.dev/').json()
+    df = pd.DataFrame.from_dict(dados)
+    
+    dados = []
+    for i in df.values.tolist():
+        item = ["<a href='i[9]'>🔗 Link</a>" , i[11], i[4], i[9], i[5], i[0], i[6], i[8], i[10], i[2], i[7], i[3]]
+        dados.append(item)
+    
+    cols = ['link', 'Transp. 🚚', 'NF', 'Ticket Id', 'Razão Social', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
+    
+    df = pd.DataFrame.from_records(dados, columns=cols)
+    qtd_tk, atrasados = len(dados), df[df['Status Prazo'] == 'Atrasado']
+
+    # controi tabela informando qtd total e em atraso
     st.html(f'''
         <table style="text-align: center;
                 border: .01rem;
@@ -92,10 +88,13 @@ if st.session_state["authentication_status"]:
             </tbody>
         </table>
       ''')
-
-    df = df.sort_values('Prazo de entrega')
-    # filtros
     
+    df = df.sort_values('Prazo de entrega')
+    
+    # filtros
+    tickets = [' ']
+    tickets.extend(df['Ticket Id'].unique().tolist())
+
     status = df['Classe'].unique().tolist()
     filtra_classe = st.sidebar.multiselect('Classe do pedido',
                                   status,
@@ -114,7 +113,6 @@ if st.session_state["authentication_status"]:
     filtros = (df['Status Prazo'].isin(status_filter)) & (df['Classe'].isin(filtra_classe)) & (df['Transp. 🚚'].isin(filter_transp))
     
     df = df[filtros]
-    
     
     data = df.values.tolist()
     a = '''
@@ -150,8 +148,6 @@ if st.session_state["authentication_status"]:
         </table>   
     '''
     st.write(a, unsafe_allow_html=True)
-
-    
 
 elif st.session_state["authentication_status"] is False:
     st.error('Usuário/Senha is inválido')
