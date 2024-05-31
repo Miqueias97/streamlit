@@ -50,14 +50,88 @@ if st.session_state["authentication_status"]:
     
     dados = []
     for i in df.values.tolist():
-        item = ["<a href='i[9]'>🔗 Link</a>" , i[11], i[4], i[9], i[5], i[0], i[6], i[8], i[10], i[2], i[7], i[3]]
+        if len(str(i[10]).strip()) > 0:
+            tk_agd = f'<a href="https://app.hubspot.com/contacts/5282301/record/0-5/{i[10]}" style="text-decoration: none;">🔗 {i[10]}</a>'            
+            dt_agen = str(i[2]).split('T')[0]
+            dt_agen = str(dt_agen).split('-')
+            dt_agen = f'{dt_agen[2]}/{dt_agen[1]}/{dt_agen[0]}'
+        else:
+            tk_agd, dt_agen = '', ''
+        dt = str(i[6]).split('T')[0]
+        dt = str(dt).split('-')
+        dt = f'{dt[2]}/{dt[1]}/{dt[0]}'
+        
+        item = [f'<a href="https://app.hubspot.com/contacts/5282301/record/0-5/{i[9]}" style="text-decoration: none;">🔗 Link</a>' , i[11], i[4], i[9], i[5], i[0], dt, i[8], tk_agd, dt_agen, i[7]]
         dados.append(item)
     
-    cols = ['link', 'Transp. 🚚', 'NF', 'Ticket Id', 'Razão Social', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.', 'Atualização']
+    cols = ['link', 'Transp. 🚚', 'NF', 'Ticket Id', 'Razão Social', 'Classe', 'Prazo de entrega', 'Status Prazo', 'Ticket Agendamento', 'Data Agendamento', 'Status Transp.']
     
     df = pd.DataFrame.from_records(dados, columns=cols)
-    qtd_tk, atrasados = len(dados), df[df['Status Prazo'] == 'Atrasado']
+    
 
+    
+    df = df.sort_values('Prazo de entrega')
+    
+    # filtros
+    tickets = [' ']
+    tickets.extend(df['Ticket Id'].unique().tolist())
+    option = st.sidebar.selectbox( "*Pesquisar Ticket ID 🔍*", tickets)
+
+    cliente = [' ']
+    cliente.extend(df['Razão Social'].unique().tolist())
+    filter_cliente = st.sidebar.selectbox( "*Pesquisar por Cliente 🔍*", cliente)
+
+    filter_agendado = st.sidebar.selectbox('Ticket possui agendamento?', (' ', 'Sim', 'Não'))
+
+    classe = df['Classe'].unique().tolist()
+    filtra_classe = st.sidebar.multiselect('Classe do pedido',
+                                  classe)
+    
+    
+    status = df['Status Prazo'].unique().tolist()
+    status_filter = st.sidebar.multiselect('Status do Envio',
+                                  status)
+    
+    transport = df['Transp. 🚚'].unique().tolist()
+    filter_transp = st.sidebar.multiselect('Transportadora',
+                                  transport)
+    
+    status_transp = df['Status Transp.'].unique().tolist()
+    status_transp_filter = st.sidebar.multiselect('Status Informado pela Transportadora',
+                                  status_transp)
+    
+    if len(filtra_classe) == 0:
+        filtra_classe = classe
+    if len(status_filter) == 0:
+        status_filter = status
+    if len(filter_transp) == 0:
+        filter_transp = transport
+    if len(status_transp_filter) == 0:
+        status_transp_filter = status_transp
+    
+    filtros = (df['Status Prazo'].isin(status_filter)) & (df['Classe'].isin(filtra_classe)) & (df['Transp. 🚚'].isin(filter_transp)) & \
+              (df['Status Transp.'].isin(status_transp_filter))
+    
+    df = df[filtros]
+
+    if option != None and len(str(option).strip()) > 0:
+        filtros = (df['Ticket Id'] == option)
+        df = df[filtros]
+
+    if filter_cliente != None and len(str(filter_cliente).strip()) > 0:
+        filtros = (df['Razão Social'] == filter_cliente)
+        df = df[filtros]
+
+    if len(str(filter_agendado).strip()) > 0:
+        if filter_agendado == 'Sim':
+            filtros = (df['Ticket Agendamento'] != "")
+        else:
+            filtros = (df['Ticket Agendamento'] == "")
+        df = df[filtros]
+
+    
+
+    qtd_tk, atrasados = len(df), df[df['Status Prazo'] == 'Atrasado']
     # controi tabela informando qtd total e em atraso
     st.html(f'''
         <table style="text-align: center;
@@ -88,31 +162,6 @@ if st.session_state["authentication_status"]:
             </tbody>
         </table>
       ''')
-    
-    df = df.sort_values('Prazo de entrega')
-    
-    # filtros
-    tickets = [' ']
-    tickets.extend(df['Ticket Id'].unique().tolist())
-
-    status = df['Classe'].unique().tolist()
-    filtra_classe = st.sidebar.multiselect('Classe do pedido',
-                                  status,
-                                  default=status)
-
-    status = df['Status Prazo'].unique().tolist()
-    status_filter = st.sidebar.multiselect('Status do Envio',
-                                  status,
-                                  default=status)
-    
-    transport = df['Transp. 🚚'].unique().tolist()
-    filter_transp = st.sidebar.multiselect('Transportador',
-                                  transport,
-                                  default=transport)
-    
-    filtros = (df['Status Prazo'].isin(status_filter)) & (df['Classe'].isin(filtra_classe)) & (df['Transp. 🚚'].isin(filter_transp))
-    
-    df = df[filtros]
     
     data = df.values.tolist()
     a = '''
