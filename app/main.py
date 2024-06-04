@@ -2,10 +2,17 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
 import requests, json
+import yaml
+from yaml.loader import SafeLoader
+
+
+with open('config.yaml') as file:
+    configAPI = yaml.load(file, Loader=SafeLoader)
 st.set_page_config(layout="wide")
 
+
 headers = {
-  'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxncXBjY2J0b2FmanlhZ2NhdmJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI3NTkxNzYsImV4cCI6MjAyODMzNTE3Nn0.8Eztx6ygiqK6jP48BC7TsXwevH0Ji-GbpRdMkOI-_m0'
+  'apikey': str(configAPI['credentials']['utils']['api']['key'])
 }
 
 response = requests.request("GET", 'https://lgqpccbtoafjyagcavbd.supabase.co/rest/v1/users', headers=headers).json()
