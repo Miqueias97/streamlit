@@ -2,8 +2,14 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
 import requests, json, os
+import yaml
+from yaml.loader import SafeLoader
 
 
+with open('config.yaml') as file:
+    configAPI = yaml.load(file, Loader=SafeLoader)
+
+st.write(configAPI)
 headers = {
   'apikey': str(st.secrets["apikey"])
 }
