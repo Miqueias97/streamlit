@@ -8,6 +8,7 @@ headers = {
   'apikey': str(st.secrets["apikey"])
 }
 
+# att
 response = requests.request("GET", 'https://lgqpccbtoafjyagcavbd.supabase.co/rest/v1/users', headers=headers).json()
 
 config = {
