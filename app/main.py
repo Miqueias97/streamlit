@@ -45,7 +45,7 @@ if st.session_state["authentication_status"]:
     st.write(f'Bem Vindo *{st.session_state["name"]}*')
     st.markdown("# Acompanhamento Envios 🚚")
     headers = {
-    'Authorization': f'{st.secrets["apiEnvios"]}=='
+    'Authorization': f'{st.secrets["apienvios"]}=='
     }    
 
     dados = requests.get('https://appapi.fly.dev/atualizacao-status-envios', headers=headers).json()
