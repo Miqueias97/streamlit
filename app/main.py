@@ -5,7 +5,7 @@ import requests, json, os
 st.set_page_config(layout="wide")
 
 headers = {
-  'apikey': st.secrets["db_username"]
+  'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxncXBjY2J0b2FmanlhZ2NhdmJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI3NTkxNzYsImV4cCI6MjAyODMzNTE3Nn0.8Eztx6ygiqK6jP48BC7TsXwevH0Ji-GbpRdMkOI-_m0'# st.secrets["db_username"]
 }
 
 #
@@ -48,7 +48,7 @@ if st.session_state["authentication_status"]:
     'Authorization': f'Basic STZucW5kb0puQ2FzeTZnZW9XT1Jra3pkbDM3RDJIMmtGaEZSYzVKVGNTM3dVWGpZUGQ6UkthT2k4dFA1SlQxZGdyVlV6WWtSbWtiQlRFSXp3ODNrRHFaWUFCb3FrRjA1amhndDdONXR0aVpRQmJuOGRPa2pCeXNuSGl2N0R1MHZxQzFTRFV2SWp4eXNoOWxTWWV4aXNwZA=='
     }    
 
-    dados = requests.get('https://appapi.fly.dev/atualizacao-status-envios', headers=headers).json()
+    dados = requests.get('https://v1-dry-morning-5282.fly.dev/atualizacao-status-envios', headers=headers).json()
     df = pd.DataFrame.from_dict(dados)
     
     dados = []
